@@ -1,0 +1,24 @@
+{% extends 'template.html' %}
+
+{% block title %}
+  Main page
+{% endblock %}
+
+
+{% block body %}
+  <div>
+    <h4> Select action you want to do:</h4>
+    <div>
+      <a href='/fixer'>get information from fixer.io</a>
+    </div>
+    <div>
+      <a href='/gbq/upload/json'>upload response into google bigquery (json)</a>
+    </div>
+    <div>
+      <a href='/gbq/upload/csv'>upload data into google bigquery (csv)</a>
+    </div>
+    <div>
+      <a href='/gbq/extract/csv'>extract data from GBQ</a>
+    </div>
+  </div>
+{% endblock %}

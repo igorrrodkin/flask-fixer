@@ -1,0 +1,5 @@
+[2021-11-26 15:50:58,236] - app - INFO - [INFO] fixer request /latest
+[2021-11-26 15:53:52,148] - app - INFO - [INFO] fixer request /latest
+[2021-11-26 15:54:02,258] - app - ERROR - [ERROR] error while extracting csv from gbq
+[2021-11-26 15:54:08,063] - app - ERROR - [ERROR] error while uploading json into gbq
+[2021-11-26 15:55:39,528] - app - INFO - [INFO] table is extracted
