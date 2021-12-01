@@ -23,18 +23,19 @@ def fixer():
 
 @app.route('/fixer', methods=['POST'])
 def select_form_fixer():
+    try:
         text = request.form['select-endpoint']
         if (text == 'latest'):
             log.info(' Latest currencies  were loaded from fixer.io in JSON format')
-            #Fixer_Io(access_key).request_fixerio('latest' , 'price'  ,'latestClass.json')
-            return render_template('fixer_response.html' , text=Fixer_Io(access_key).request_fixerio('latest' , 'price'  ,'latestClass.json'))
+            Fixer_Io(access_key).request_fixerio('latest' , 'price'  ,'latestClass.json')
+            return render_template('fixer_response.html')
         if (text == 'symbols'):
             log.info(' Symbols  were loaded from fixer.io in JSON format')
             Fixer_Io(access_key).request_fixerio('symbols' , 'name' , 'symbolsClass.json')
             return render_template('fixer_response.html')
-    # except:
-    #     log.error(' fixer request falied')
-    #     return render_template('error_html.html')
+    except:
+        log.error(' fixer request falied')
+        return render_template('error_html.html')
 
 
 @app.route('/gbq/upload/json')
