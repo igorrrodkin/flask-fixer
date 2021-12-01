@@ -1,20 +1,14 @@
 from flask import Flask, render_template, request
-from fixer_response import latest_currencies, symbols_response
+from fixer_response import Fixer_Io
 from google_bigquery import Loader_to_GBQ, Extractor_from_GBQ
 import logging
-
-
+import logging.handlers
+from config import access_key
+from logger import Logger
 
 app = Flask(__name__)
 
-
-handler = logging.FileHandler("test.log")
-formatter = logging.Formatter(
-    '[%(asctime)s] - %(name)s - %(levelname)s - %(message)s')
-app.logger.setLevel(logging.DEBUG)
-handler.setFormatter(formatter)
-app.logger.addHandler(handler)
-
+log = Logger('info.log').logger()
 
 
 @app.route('/')
@@ -29,17 +23,18 @@ def fixer():
 
 @app.route('/fixer', methods=['POST'])
 def select_form_fixer():
-    try:
         text = request.form['select-endpoint']
         if (text == 'latest'):
-            app.logger.info('[INFO] fixer request /latest')
-            return render_template('fixer_response.html', myfunction=latest_currencies)
+            log.info(' Latest currencies  were loaded from fixer.io in JSON format')
+            #Fixer_Io(access_key).request_fixerio('latest' , 'price'  ,'latestClass.json')
+            return render_template('fixer_response.html' , text=Fixer_Io(access_key).request_fixerio('latest' , 'price'  ,'latestClass.json'))
         if (text == 'symbols'):
-            app.logger.info('[INFO] fixer request /symbols')
-            return render_template('fixer_response.html', myfunction=symbols_response)
-    except:
-        app.logger.error('[ERROR] fixer request falied')
-        return render_template('error_html.html')
+            log.info(' Symbols  were loaded from fixer.io in JSON format')
+            Fixer_Io(access_key).request_fixerio('symbols' , 'name' , 'symbolsClass.json')
+            return render_template('fixer_response.html')
+    # except:
+    #     log.error(' fixer request falied')
+    #     return render_template('error_html.html')
 
 
 @app.route('/gbq/upload/json')
@@ -78,10 +73,10 @@ def upload_gbq_json_submit():
         table = request.form['table']
         uploader = Loader_to_GBQ(key_file, project_id)
         uploader.uploading_json_to_gbq(dataset, table, filename, table_schema)
-        app.logger.info('[INFO] json is uploaded')
+        log.info(' JSON is uploaded to BigQuery')
         return render_template('gbq_response.html')
     except:
-        app.logger.error('[ERROR] error while uploading json into gbq')
+        log.error(' ERROR while uploading JSON into BigQuery')
         return render_template('error_html.html')
 
 
@@ -104,10 +99,10 @@ def upload_gbq_csv_submit():
         table = request.form['table']
         uploader = Loader_to_GBQ(key_file, project_id)
         uploader.uploading_csv_to_gbq(dataset, table, filename)
-        app.logger.info('[INFO] csv is uploaded')
+        log.info(' CSV is uploaded')
         return render_template('gbq_response.html')
     except:
-        app.logger.error('[ERROR] error while uploading csv into gbq')
+        log.error(' error while uploading CSV into gbq')
         return render_template('error_html.html')
 
 
@@ -126,10 +121,10 @@ def extract_table_submit():
         output = request.form['destination']
         uploader = Extractor_from_GBQ(key_file, project_id)
         uploader.get_data_from_gbq(dataset, table, output)
-        app.logger.info('[INFO] table is extracted')
+        log.info(' Table is extracted')
         return render_template('gbq_response.html')
     except:
-        app.logger.error('[ERROR] error while extracting csv from gbq')
+        log.error(' error while extracting CSV from gbq')
         return render_template('error_html.html')
 
 

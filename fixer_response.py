@@ -1,38 +1,41 @@
 import requests
 import json
-from config import access_key 
+#from config import access_key 
+from logger import Logger
 
-def latest_currencies():
-    r_latest = requests.get('http://data.fixer.io/api/latest?access_key='+access_key)
+log = Logger('info.log').logger()
 
-    json_response = json.dumps(r_latest.json()['rates'] , indent=4 , sort_keys=True)
+class Fixer_Io:
+    def __init__(self , access_key):
+        self.access_key  = access_key
 
-    currencies = json.loads(json_response).keys()
-    prices = json.loads(json_response).values()
-    response = []
-    for currency, price in zip(currencies, prices):
-        response.append({"currency": currency , "price": price})
+    def request_fixerio(self ,fixer_endopoint, column_name , output_file):
+        try:
+            response = requests.get(f'http://data.fixer.io/api/{fixer_endopoint}?access_key={self.access_key}')
+            if fixer_endopoint == 'latest':
+                json_response = json.dumps(response.json()['rates'] , indent=4 , sort_keys=True)
+            if fixer_endopoint == 'symbols':
+                json_response = json.dumps(response.json()['symbols'] , indent=4 , sort_keys=True)
+            currencies = json.loads(json_response).keys()
+            data = json.loads(json_response).values()
+            response = []
+            for currency, data in zip(currencies, data):
+                response.append({"currency": currency , column_name: data})
 
-    with open('latest.json', 'w+') as outfile:
-                json.dump(response, outfile)
-    return {'latest:':response}
+            with open(output_file, 'w+') as outfile:
+                        json.dump(response, outfile)
+            return log.info('Succefully loaded')
 
 
+        except UnboundLocalError:
+            return log.error('invalid fixer endpoint')
+        except KeyError:
+            return log.error('access key isnot valid , bad request')
+        except:
+            return log.error('something has happened')
 
-def symbols_response():
-    r_symbols = requests.get('http://data.fixer.io/api/symbols?access_key='+access_key)
-
-    json_response = json.dumps(r_symbols.json()['symbols'] , indent=4 , sort_keys=True)
-
-    currencies = json.loads(json_response).keys()
-    names = json.loads(json_response).values()
-    response = []
-    for currency, name in zip(currencies, names):
-        response.append({"currency": currency , "name": name})
-
-    with open('symbols.json', 'w+') as outfile:
-                json.dump(response, outfile)
-    return {'symbols:':response}
+# fix = Fixer_Io(access_key)
+# fix.request_fixerio('latest' , 'price' , 'datalatest.json')
 
 
 
