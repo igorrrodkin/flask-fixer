@@ -1,7 +1,10 @@
 import psycopg2
-from config import host, user, password, db_name
+import os
+from dotenv import load_dotenv
 from app import log
 from errors import IncorrectFileExtensionError ,InvalidSchemaError
+
+load_dotenv()
 
 class Postgres_connector():
 
@@ -112,3 +115,8 @@ class Postgres_connector():
         except:
             return log.warning('Something went wrong')
 
+
+# user = os.getenv('user')
+# host = os.getenv('host')
+# password = os.getenv('password')
+# db_name = os.getenv('db_name')

@@ -1,6 +1,5 @@
 import requests
 import json
-#from config import access_key 
 from logger import Logger
 
 log = Logger('info.log').logger()
