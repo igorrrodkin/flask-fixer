@@ -8,7 +8,7 @@ from logger import Logger
 
 app = Flask(__name__)
 
-log = Logger('info.log').logger()
+log = Logger('log.log').logger()
 
 
 @app.route('/')
