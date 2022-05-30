@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 from fixer_response import Fixer_Io
 from google_bigquery import Loader_to_GBQ, Extractor_from_GBQ
-import logging
+
 import logging.handlers
 from config import access_key
 from logger import Logger
